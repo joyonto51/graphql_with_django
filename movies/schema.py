@@ -68,6 +68,7 @@ class CreateActor(graphene.Mutation):
         ok = True
         actor_instance = Actor(name=input.name)
         actor_instance.save()
+
         return CreateActor(ok=ok, actor=actor_instance)
 
 class UpdateActor(graphene.Mutation):
@@ -82,11 +83,13 @@ class UpdateActor(graphene.Mutation):
     def mutate(root, info, id, input=None):
         ok = False
         actor_instance = Actor.objects.get(pk=id)
+
         if actor_instance:
             ok = True
             actor_instance.name = input.name
             actor_instance.save()
             return UpdateActor(ok=ok, actor=actor_instance)
+
         return UpdateActor(ok=ok, actor=None)
 
 
@@ -128,18 +131,23 @@ class UpdateMovie(graphene.Mutation):
     def mutate(root, info, id, input=None):
         ok = False
         movie_instance = Movie.objects.get(pk=id)
+
         if movie_instance:
             ok = True
             actors = []
+
             for actor_input in input.actors:
               actor = Actor.objects.get(pk=actor_input.id)
               if actor is None:
                 return UpdateMovie(ok=False, movie=None)
               actors.append(actor)
+
             movie_instance.title=input.title
-            movie_instance.year=input.yearce.save()
+            movie_instance.year=input.year
             movie_instance.actors.set(actors)
+
             return UpdateMovie(ok=ok, movie=movie_instance)
+
         return UpdateMovie(ok=ok, movie=None)
 
 
